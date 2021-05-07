@@ -1,0 +1,18 @@
+- type: entity
+  id: Ball
+  components:
+    - type: Physics
+      status: InAir
+      bodyType: KinematicController
+      fixtures:
+        - name: collision
+          friction: 0
+          restitution: 0
+          shape:
+            !type:PhysShapeAabb
+            bounds: "-0.1,-0.1,0.1,0.1"
+          layer:
+            - Solid
+          mask:
+            - Solid
+    - type: Ball

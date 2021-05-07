@@ -1,0 +1,7 @@
+<Control xmlns="https://spacestation14.io" HorizontalExpand="True" VerticalExpand="True">
+    <CenterContainer>
+        <PanelContainer>
+            <Label Name="Label" Align="Center" VAlign="Center"/>
+        </PanelContainer>
+    </CenterContainer>
+</Control>

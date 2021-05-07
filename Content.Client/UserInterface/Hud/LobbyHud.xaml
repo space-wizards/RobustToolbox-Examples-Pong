@@ -1,0 +1,7 @@
+<Control xmlns="https://spacestation14.io" HorizontalExpand="True" VerticalExpand="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <PanelContainer Margin="25 25 25 25">
+        <CenterContainer Margin="5 5 5 5" HorizontalExpand="True" VerticalExpand="True">
+            <Label Text="Waiting for players..." />
+        </CenterContainer>
+    </PanelContainer>
+</Control>

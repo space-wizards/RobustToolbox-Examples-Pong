@@ -1,0 +1,19 @@
+- type: entity
+  id: Paddle
+  components:
+    - type: Physics
+      status: InAir
+      bodyType: KinematicController
+      fixtures:
+        - name: collision
+          friction: 0
+          restitution: 0
+          shape:
+            !type:PhysShapeAabb
+            bounds: "-1,-0.1,1,0.1"
+          layer:
+            - Solid
+          mask:
+            - Solid
+    - type: Paddle
+    - type: Input

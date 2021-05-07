@@ -1,0 +1,13 @@
+<Control xmlns="https://spacestation14.io" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <PanelContainer MaxSize="480 250">
+        <VBoxContainer Margin="15 15 15 15" HorizontalExpand="True" VerticalExpand="True" SeparationOverride="5">
+            <Label Text="Robust Pong" Align="Center" StyleClasses="LabelGame"/>
+            <Label Text="Now with extra paddles!" Align="Center"/>
+            <Control VerticalExpand="True"/>
+            <LineEdit Name="UsernameLineEdit" PlaceHolder="Username..." MaxWidth="150"/>
+            <LineEdit Name="AddressLineEdit" PlaceHolder="Server address..." MaxWidth="150"/>
+            <Control />
+            <Button Name="ConnectButton" Text="Connect" TextAlign="Center" MaxWidth="75"/>
+        </VBoxContainer>
+    </PanelContainer>
+</Control>

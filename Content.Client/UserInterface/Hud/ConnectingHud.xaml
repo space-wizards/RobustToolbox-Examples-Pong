@@ -1,0 +1,7 @@
+<Control xmlns="https://spacestation14.io" xmlns:hud="clr-namespace:Content.Client.UserInterface.Hud"
+         HorizontalExpand="True" VerticalExpand="True" HorizontalAlignment="Center" VerticalAlignment="Center">
+    <VBoxContainer>
+        <hud:MessageControl Name="Message" />
+        <Button Name="Button" Text="Reconnect" Visible="false" TextAlign="Center" />
+    </VBoxContainer>
+</Control>

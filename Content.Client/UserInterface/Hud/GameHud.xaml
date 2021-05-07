@@ -1,0 +1,14 @@
+<Control xmlns="https://spacestation14.io" 
+         HorizontalExpand="True" VerticalExpand="True" HorizontalAlignment="Stretch" VerticalAlignment="Top">
+    <HBoxContainer Margin="10 10 10 10" Align="Center" SeparationOverride="50" HorizontalExpand="True">
+        <VBoxContainer SeparationOverride="5" HorizontalExpand="True">
+            <Label Name="LabelPlayerOneName" Text="Player 1" HorizontalAlignment="Left" StyleClasses="LabelGame"/>
+            <Label Name="LabelPlayerOneScore" Text="0" HorizontalAlignment="Left" StyleClasses="LabelGame"/>
+        </VBoxContainer>
+        <Label Name="WinnerLabel" HorizontalExpand="True" SizeFlagsStretchRatio="0.8" Align="Center" StyleClasses="LabelGame"/>
+        <VBoxContainer SeparationOverride="5" HorizontalExpand="True">
+            <Label Name="LabelPlayerTwoName" Text="Player 2" HorizontalAlignment="Right" StyleClasses="LabelGame"/>
+            <Label Name="LabelPlayerTwoScore" Text="0" HorizontalAlignment="Right" StyleClasses="LabelGame"/>
+        </VBoxContainer>
+    </HBoxContainer>
+</Control>
