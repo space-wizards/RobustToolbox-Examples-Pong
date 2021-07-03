@@ -7,20 +7,18 @@ using Robust.Shared.IoC;
 using Robust.Shared.Maths;
 using Robust.Shared.Physics.Dynamics;
 using Robust.Shared.Player;
-using Robust.Shared.Random;
 
 namespace Content.Shared.Ball
 {
     [UsedImplicitly]
     public class BallSystem : EntitySystem
     {
-        [Dependency] private readonly IRobustRandom _random = default!;
         [Dependency] private readonly IConfigurationManager _cfgManager = default!;
         
         private float _ballSpeedupFactor;
-        
+
         public float BallMaximumSpeed { get; private set; }
-        
+
         public override void Initialize()
         {
             base.Initialize();
@@ -29,13 +27,7 @@ namespace Content.Shared.Ball
             _cfgManager.OnValueChanged(ContentCVars.BallSpeedup, OnBallSpeedupChanged, true);
             _cfgManager.OnValueChanged(ContentCVars.BallMaximumSpeed, OnBallMaxSpeedChanged, true);
         }
-        
-        public override void Shutdown()
-        {
-            base.Shutdown();
-            UnsubscribeLocalEvent<BallComponent, StartCollideEvent>();
-        }
-        
+
         private void OnBallSpeedupChanged(float factor)
         {
             _ballSpeedupFactor = factor;
@@ -64,7 +56,7 @@ namespace Content.Shared.Ball
             
             physics.LinearVelocity *= new Vector2(-1, MathF.Sign(y) * MathF.Sign(ourVelocity.Y)) * _ballSpeedupFactor;
 
-            SoundSystem.Play(Filter.Broadcast(), "/Audio/bleep.wav", AudioParams.Default);
+            SoundSystem.Play(Filter.Broadcast(), "/Audio/bleep.wav", AudioParams.Default.WithVolume(-5f));
         }
     }
 

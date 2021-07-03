@@ -229,14 +229,14 @@ namespace Content.Server
             {
                 if (_playerOne is not {Status: SessionStatus.InGame})
                 {
-                    if(_paddleOne!.HasComponent<IActorComponent>())
+                    if(_paddleOne!.HasComponent<ActorComponent>())
                         _playerOne?.DetachFromEntity();
                     _playerOne = PaddleReassign(_paddleOne!, _playerTwo);
                 }
 
                 if (_playerTwo is not {Status: SessionStatus.InGame})
                 {
-                    if(_paddleTwo!.HasComponent<IActorComponent>())
+                    if(_paddleTwo!.HasComponent<ActorComponent>())
                         _playerTwo?.DetachFromEntity();
                     _playerTwo = PaddleReassign(_paddleTwo!, _playerOne);
                 }

@@ -37,7 +37,7 @@ namespace Content.Client.Overlays
 
             foreach (var physics in _componentManager.EntityQuery<PhysicsComponent>())
             {
-                var aabb = physics.GetWorldAABB(_mapManager);
+                var aabb = physics.GetWorldAABB();
                 handle.DrawRect(aabb, Color.White);
             }
             

@@ -17,14 +17,6 @@ namespace Content.Client
             SubscribeLocalEvent<PlayerAttachSysMessage>(OnPlayerAttached);
         }
 
-        public override void Shutdown()
-        {
-            base.Shutdown();
-            
-            UnsubscribeNetworkEvent<PongGameStateChangedEvent>();
-            UnsubscribeLocalEvent<PlayerAttachSysMessage>();
-        }
-
         private void OnPongGameStateChanged(PongGameStateChangedEvent ev)
         {
             State = ev.New;

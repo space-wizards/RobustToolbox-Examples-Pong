@@ -29,7 +29,7 @@ namespace Content.Shared.Ball
                 if (!(y > 0) || !(y < SharedPongSystem.ArenaBox.Height))
                 {
                     physics.LinearVelocity *= new Vector2(1, -1);
-                    SoundSystem.Play(Filter.Broadcast(), "/Audio/bloop.wav", AudioParams.Default);
+                    SoundSystem.Play(Filter.Broadcast(), "/Audio/bloop.wav", AudioParams.Default.WithVolume(-5f));
                 }
 
                 var maxSpeed = EntitySystem.Get<BallSystem>().BallMaximumSpeed;
