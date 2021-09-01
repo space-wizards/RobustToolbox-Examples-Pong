@@ -2,6 +2,7 @@ using System;
 using JetBrains.Annotations;
 using Robust.Shared.Configuration;
 using Robust.Shared.GameObjects;
+using Robust.Shared.GameStates;
 using Robust.Shared.Input;
 using Robust.Shared.Input.Binding;
 using Robust.Shared.IoC;
@@ -25,12 +26,30 @@ namespace Content.Shared.Paddle
         {
             base.Initialize();
             
+            SubscribeLocalEvent<PaddleComponent, ComponentGetState>(GetPaddleState);
+            SubscribeLocalEvent<PaddleComponent, ComponentHandleState>(HandlePaddleState);
+            
             _cfgManager.OnValueChanged(ContentCVars.PaddleSpeed, OnPaddleSpeedChanged, true);
             
             CommandBinds.Builder
                 .Bind(EngineKeyFunctions.MoveUp, new ButtonInputCmdHandler(Button.Up, SetMovementInput))
                 .Bind(EngineKeyFunctions.MoveDown, new ButtonInputCmdHandler(Button.Down, SetMovementInput))
                 .Register<PaddleSystem>();
+        }
+
+        private void GetPaddleState(EntityUid uid, PaddleComponent component, ref ComponentGetState args)
+        {
+            args.State = new PaddleComponentState(component.Score, component.Player, component.First, component.Pressed);
+        }
+
+        private void HandlePaddleState(EntityUid uid, PaddleComponent component, ref ComponentHandleState args)
+        {
+            if (args.Current is not PaddleComponentState state)
+                return;
+
+            component.Score = state.Score;
+            component.Player = state.Player;
+            component.First = state.First;
         }
 
         public override void Shutdown()
@@ -83,31 +102,15 @@ namespace Content.Shared.Paddle
         }
     }
 
-    [RegisterComponent]
+    [RegisterComponent, NetworkedComponent]
     public class PaddleComponent : Component
     {
         public override string Name => "Paddle";
-        public override uint? NetID => ContentNetIDs.PADDLE;
 
         public Button Pressed { get; set; } = Button.None;
         public int Score { get; set; } = 0;
         public string Player { get; set; } = string.Empty;
         public bool First { get; set; } = false;
-
-        public override ComponentState GetComponentState(ICommonSession player)
-        {
-            return new PaddleComponentState(Score, Player, First, Pressed);
-        }
-
-        public override void HandleComponentState(ComponentState? curState, ComponentState? nextState)
-        {
-            if (curState is not PaddleComponentState state)
-                return;
-
-            Score = state.Score;
-            Player = state.Player;
-            First = state.First;
-        }
     }
 
     [Serializable, NetSerializable]
@@ -118,7 +121,7 @@ namespace Content.Shared.Paddle
         public bool First { get; }
         public Button Pressed { get; }
         
-        public PaddleComponentState(int score, string player, bool first, Button pressed) : base(ContentNetIDs.PADDLE)
+        public PaddleComponentState(int score, string player, bool first, Button pressed)
         {
             Score = score;
             Player = player;

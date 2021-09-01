@@ -43,6 +43,8 @@ namespace Content.Client
 
             IoCManager.BuildGraph();
             
+            factory.GenerateNetIds();
+            
             IoCManager.Resolve<StyleSheetManager>().Initialize();
             IoCManager.Resolve<HudManager>().Initialize();
         }
