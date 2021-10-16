@@ -41,7 +41,7 @@ namespace Content.Shared.Ball
         private void OnBallCollide(EntityUid uid, BallComponent component, StartCollideEvent args)
         {
             // Reflect the ball if it has collided with anything and speed it up slightly.
-            var physics = ComponentManager.GetComponent<PhysicsComponent>(uid);
+            var physics = EntityManager.GetComponent<PhysicsComponent>(uid);
 
             var (_, y) = args.OtherFixture.Body.LinearVelocity;
             var ourVelocity = physics.LinearVelocity;

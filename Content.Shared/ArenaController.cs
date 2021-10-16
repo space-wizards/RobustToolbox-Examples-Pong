@@ -16,7 +16,7 @@ namespace Content.Shared
         {
             base.UpdateAfterSolve(prediction, frameTime);
 
-            foreach (var (transform, _) in ComponentManager.EntityQuery<ITransformComponent, PhysicsComponent>())
+            foreach (var (transform, _) in EntityManager.EntityQuery<ITransformComponent, PhysicsComponent>())
             {
                 if (transform.ParentUid == EntityUid.Invalid)
                     return;

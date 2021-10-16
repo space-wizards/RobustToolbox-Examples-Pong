@@ -13,7 +13,7 @@ namespace Content.Client.UserInterface.States
 {
     public class GameState : State
     {
-        [Dependency] private readonly IComponentManager _componentManager = default!;
+        [Dependency] private readonly IEntityManager _entityManager = default!;
         [Dependency] private readonly IUserInterfaceManager _userInterface = default!;
         
         private GameHud? _gameHud;
@@ -68,7 +68,7 @@ namespace Content.Client.UserInterface.States
 
             var winningScore = 0;
 
-            foreach (var paddle in _componentManager.EntityQuery<PaddleComponent>())
+            foreach (var paddle in _entityManager.EntityQuery<PaddleComponent>())
             {
                 // There's only supposed to be two paddle entities.
                 if (paddle.First)

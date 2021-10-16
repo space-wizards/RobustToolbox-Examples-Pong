@@ -59,7 +59,7 @@ namespace Content.Server
             {
                 var score = 0;
                 
-                foreach (var paddle in ComponentManager.EntityQuery<PaddleComponent>())
+                foreach (var paddle in EntityManager.EntityQuery<PaddleComponent>())
                 {
                     score += paddle.Score;
                 }
@@ -287,7 +287,7 @@ namespace Content.Server
                         SoundSystem.Play(Filter.Broadcast(), "/Audio/score.wav", AudioParams.Default);
                         
                         // Reset ball.
-                        _ball!.Transform.Coordinates = EntityCoordinates.FromMap(EntityManager, _mapManager, MapCenter);
+                        _ball!.Transform.Coordinates = EntityCoordinates.FromMap(_mapManager, MapCenter);
                         var ballPhysics = _ball.GetComponent<PhysicsComponent>();
                         var speed = ballPhysics.LinearVelocity.Normalized * BallInitialSpeed * BallScoreSpeedMultiplier;
                         ballPhysics.LinearVelocity = Vector2.Zero;

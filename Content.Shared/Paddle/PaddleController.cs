@@ -18,7 +18,7 @@ namespace Content.Shared.Paddle
 
             var speed = EntitySystem.Get<PaddleSystem>().PaddleSpeed;
             
-            foreach (var (paddle, physics) in ComponentManager.EntityQuery<PaddleComponent, PhysicsComponent>())
+            foreach (var (paddle, physics) in EntityManager.EntityQuery<PaddleComponent, PhysicsComponent>())
             {
                 var direction = Vector2.Zero;
                 

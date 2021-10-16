@@ -1,6 +1,7 @@
 using Content.Shared;
 using JetBrains.Annotations;
 using Robust.Client.GameObjects;
+using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Maths;
 
@@ -34,6 +35,7 @@ namespace Content.Client
             var eye = camera.AddComponent<EyeComponent>();
             eye.Current = true;
             eye.Zoom = Vector2.One;
+
         }
     }
 }

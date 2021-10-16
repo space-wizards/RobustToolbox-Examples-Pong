@@ -95,7 +95,7 @@ namespace Content.Shared.Paddle
             {
                 if (message is not FullInputCmdMessage full)
                     return false;
-
+                
                 _handler.Invoke(session, _button, full.State == BoundKeyState.Down);
                 return false;
             }

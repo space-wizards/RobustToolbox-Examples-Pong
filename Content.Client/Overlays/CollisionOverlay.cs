@@ -17,7 +17,7 @@ namespace Content.Client.Overlays
     {
         [Dependency] private readonly IMapManager _mapManager = default!;
         [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
-        [Dependency] private readonly IComponentManager _componentManager = default!;
+        [Dependency] private readonly IEntityManager _entityManager = default!;
         
         public override OverlaySpace Space => OverlaySpace.WorldSpace;
 
@@ -35,7 +35,7 @@ namespace Content.Client.Overlays
             
             handle.UseShader(_shader);
 
-            foreach (var physics in _componentManager.EntityQuery<PhysicsComponent>())
+            foreach (var physics in _entityManager.EntityQuery<PhysicsComponent>())
             {
                 var aabb = physics.GetWorldAABB();
                 handle.DrawRect(aabb, Color.White);
