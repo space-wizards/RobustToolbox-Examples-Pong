@@ -21,7 +21,7 @@ namespace Content.Shared.Ball
         {
             base.UpdateAfterSolve(prediction, frameTime);
 
-            foreach (var (_, transform, physics) in EntityManager.EntityQuery<BallComponent, ITransformComponent, PhysicsComponent>())
+            foreach (var (_, transform, physics) in EntityManager.EntityQuery<BallComponent, TransformComponent, PhysicsComponent>())
             {
                 var y = transform.WorldPosition.Y;
 
