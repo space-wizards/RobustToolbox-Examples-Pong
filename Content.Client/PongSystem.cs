@@ -27,12 +27,12 @@ namespace Content.Client
         
         private void OnPlayerAttached(PlayerAttachSysMessage ev)
         {
-            if (ev.AttachedEntity == null)
+            if (!ev.AttachedEntity.Valid)
                 return;
 
             // This will set a camera in the middle of the arena.
-            var camera = EntityManager.SpawnEntity(null, new MapCoordinates(ArenaSize/2f, ev.AttachedEntity.Transform.MapID));
-            var eye = camera.AddComponent<EyeComponent>();
+            var camera = EntityManager.SpawnEntity(null, new MapCoordinates(ArenaSize/2f, Transform(ev.AttachedEntity).MapID));
+            var eye = EnsureComp<EyeComponent>(camera);
             eye.Current = true;
             eye.Zoom = Vector2.One;
 

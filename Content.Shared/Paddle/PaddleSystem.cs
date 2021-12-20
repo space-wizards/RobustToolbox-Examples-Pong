@@ -63,11 +63,11 @@ namespace Content.Shared.Paddle
             PaddleSpeed = speed;
         }
 
-        private static void SetMovementInput(ICommonSession? session, Button button, bool state)
+        private void SetMovementInput(ICommonSession? session, Button button, bool state)
         {
             if (session?.AttachedEntity == null 
-                || session.AttachedEntity.Deleted 
-                || !session.AttachedEntity.TryGetComponent<PaddleComponent>(out var paddle))
+                || Deleted(session.AttachedEntity) 
+                || !TryComp<PaddleComponent>(session.AttachedEntity, out var paddle))
                 return;
 
             if (state)

@@ -50,7 +50,7 @@ namespace Content.Shared.Ball
             // Reflect direction will depend on positions so it can be predicted accurately by the client.
             if (MathHelper.CloseTo(y, 0f))
             {
-                y = component.Owner.Transform.WorldPosition.Y > args.OtherFixture.Body.Owner.Transform.WorldPosition.Y 
+                y = Transform(component.Owner).WorldPosition.Y > Transform(args.OtherFixture.Body.Owner).WorldPosition.Y 
                     ? 1f : -1f;
             }
             

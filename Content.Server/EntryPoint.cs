@@ -36,7 +36,7 @@ namespace Content.Server
         public override void PostInit()
         {
             // Pong doesn't need PVS.
-            IoCManager.Resolve<IConfigurationManager>().SetCVar(CVars.NetPVS, false);
+            //IoCManager.Resolve<IConfigurationManager>().SetCVar(CVars.NetPVS, false);
         }
 
         public override void Update(ModUpdateLevel level, FrameEventArgs frameEventArgs)

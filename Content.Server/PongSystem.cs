@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading;
 using Content.Shared;
 using Content.Shared.Paddle;
@@ -27,6 +28,7 @@ namespace Content.Server
         [Dependency] private readonly IMapManager _mapManager = default!;
         [Dependency] private readonly IPlayerManager _playerManager = default!;
         [Dependency] private readonly IConfigurationManager _cfgManager = default!;
+        [Dependency] private readonly ActorSystem _actorSystem = default!;
         
         private float _restartTimer;
         private int _winThreshold;
@@ -44,14 +46,14 @@ namespace Content.Server
         private IPlayerSession? _playerOne;
         private IPlayerSession? _playerTwo;
 
-        private IEntity? _paddleOne;
-        private IEntity? _paddleTwo;
-        private IEntity? _ball;
+        private EntityUid? _paddleOne;
+        private EntityUid? _paddleTwo;
+        private EntityUid? _ball;
 
         /// <summary>
         ///     Returns the number of players who are connected or in-game.
         /// </summary>
-        private int ConnectedPlayers => _playerManager.GetPlayersBy(player => player.Status is SessionStatus.Connected or SessionStatus.InGame).Count;
+        private int ConnectedPlayers => Filter.Empty().AddWhere(player => player.Status is SessionStatus.Connected or SessionStatus.InGame).Recipients.Count();
         
         public float BallScoreSpeedMultiplier
         {
@@ -101,7 +103,7 @@ namespace Content.Server
             
             ChangeState(PongGameState.Game);
 
-            var players = _playerManager.GetAllPlayers();
+            var players = _playerManager.ServerSessions.ToList();
 
             _playerOne = _random.PickAndTake(players);
             _playerTwo = _random.PickAndTake(players);
@@ -109,7 +111,7 @@ namespace Content.Server
             _map = _mapManager.CreateMap();
             
             _ball = MakeBall();
-            _ball.GetComponent<PhysicsComponent>().LinearVelocity = Vector2.One * BallInitialSpeed * BallScoreSpeedMultiplier; 
+            Comp<PhysicsComponent>(_ball.Value).LinearVelocity = Vector2.One * BallInitialSpeed * BallScoreSpeedMultiplier; 
 
             _paddleOne = MakePaddle(_playerOne, true);
             _paddleTwo = MakePaddle(_playerTwo, false);
@@ -127,7 +129,8 @@ namespace Content.Server
 
             Logger.Info("Ending pong game...");
 
-            _ball?.Delete();
+            if(_ball is {} ball)
+                Del(ball);
             _endTimer = _restartTimer;
             
             ChangeState(PongGameState.End);
@@ -142,7 +145,7 @@ namespace Content.Server
             // Clear all entities.
             foreach (var entity in EntityManager.GetEntities())
             {
-                entity.Delete();
+                Del(entity);
             }
             
             _map = MapId.Nullspace;
@@ -164,19 +167,19 @@ namespace Content.Server
             Logger.Info($"Pong Game State changed from {old} to {State}!");
         }
 
-        private IEntity MakeBall()
+        private EntityUid MakeBall()
         {
             DebugTools.Assert(State == PongGameState.Game);
 
             return EntityManager.SpawnEntity("Ball", MapCenter);
         }
         
-        private IEntity MakePaddle(IPlayerSession session, bool first)
+        private EntityUid MakePaddle(IPlayerSession session, bool first)
         {
             DebugTools.Assert(State == PongGameState.Game);
             
             var entity = EntityManager.SpawnEntity("Paddle", first ? PaddleOneStarting : PaddleTwoStarting);
-            var paddle = entity.GetComponent<PaddleComponent>();
+            var paddle = Comp<PaddleComponent>(entity);
 
             paddle.Player = session.Name;
             paddle.First = first;
@@ -205,19 +208,19 @@ namespace Content.Server
             if (ConnectedPlayers < 2)
                 return;
             
-            IPlayerSession PaddleReassign(IEntity paddle, IPlayerSession? ignore)
+            IPlayerSession PaddleReassign(EntityUid paddle, IPlayerSession? ignore)
             {
-                var players = _playerManager.GetPlayersBy(s => s != ignore && s.Status == SessionStatus.InGame);
+                var players = Filter.Empty().AddWhere(s => s != ignore && s.Status == SessionStatus.InGame, _playerManager).Recipients.ToList();
 
                 // No more players to choose from.
                 if (players.Count == 0)
                     return null!;
                 
-                var player = _random.PickAndTake(players);
+                var player = (IPlayerSession)_random.PickAndTake(players);
 
-                player.AttachToEntity(paddle);
-                
-                var paddleComp = paddle.GetComponent<PaddleComponent>();
+                _actorSystem.Attach(paddle, player);
+
+                var paddleComp = Comp<PaddleComponent>(paddle);
                 paddleComp.Player = player.Name;
                 paddleComp.Dirty();
                 
@@ -229,16 +232,16 @@ namespace Content.Server
             {
                 if (_playerOne is not {Status: SessionStatus.InGame})
                 {
-                    if(_paddleOne!.HasComponent<ActorComponent>())
+                    if(HasComp<ActorComponent>(_paddleOne!.Value))
                         _playerOne?.DetachFromEntity();
-                    _playerOne = PaddleReassign(_paddleOne!, _playerTwo);
+                    _playerOne = PaddleReassign(_paddleOne!.Value, _playerTwo);
                 }
 
                 if (_playerTwo is not {Status: SessionStatus.InGame})
                 {
-                    if(_paddleTwo!.HasComponent<ActorComponent>())
+                    if(HasComp<ActorComponent>(_paddleTwo!.Value))
                         _playerTwo?.DetachFromEntity();
-                    _playerTwo = PaddleReassign(_paddleTwo!, _playerOne);
+                    _playerTwo = PaddleReassign(_paddleTwo.Value, _playerOne);
                 }
             }, CancellationToken.None);
         }
@@ -279,32 +282,33 @@ namespace Content.Server
                         EndGame();
                         break;
                     }
-                    
-                    var ballX = _ball!.Transform.WorldPosition.X;
+
+                    var ballXform = Transform(_ball!.Value);
+                    var ballX = ballXform.WorldPosition.X;
 
                     void OnScore()
                     {
                         SoundSystem.Play(Filter.Broadcast(), "/Audio/score.wav", AudioParams.Default);
                         
                         // Reset ball.
-                        _ball!.Transform.Coordinates = EntityCoordinates.FromMap(_mapManager, MapCenter);
-                        var ballPhysics = _ball.GetComponent<PhysicsComponent>();
+                        ballXform.Coordinates = EntityCoordinates.FromMap(_mapManager, MapCenter);
+                        var ballPhysics = Comp<PhysicsComponent>(_ball.Value);
                         var speed = ballPhysics.LinearVelocity.Normalized * BallInitialSpeed * BallScoreSpeedMultiplier;
                         ballPhysics.LinearVelocity = Vector2.Zero;
-                        _ball.SpawnTimer(1000, () => ballPhysics.LinearVelocity = speed, CancellationToken.None);
+                        Timer.Spawn(1000, () => ballPhysics.LinearVelocity = speed, CancellationToken.None);
                     }
                     
-                    var paddleOne = _paddleOne!.GetComponent<PaddleComponent>();
-                    var paddleTwo = _paddleTwo!.GetComponent<PaddleComponent>();
+                    var paddleOne = Comp<PaddleComponent>(_paddleOne!.Value);
+                    var paddleTwo = Comp<PaddleComponent>(_paddleTwo!.Value);
                     
-                    if (ballX < _paddleOne!.Transform.WorldPosition.X - BallScoreOffset)
+                    if (ballX < Transform(_paddleOne.Value).WorldPosition.X - BallScoreOffset)
                     {
                         paddleTwo.Score++;
                         paddleTwo.Dirty();
                         OnScore();
                     }
                     
-                    if (ballX > _paddleTwo!.Transform.WorldPosition.X + BallScoreOffset)
+                    if (ballX > Transform(_paddleTwo.Value).WorldPosition.X + BallScoreOffset)
                     {
                         paddleOne.Score++;
                         paddleOne.Dirty();

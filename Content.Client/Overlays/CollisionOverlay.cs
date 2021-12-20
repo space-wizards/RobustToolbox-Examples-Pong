@@ -31,6 +31,9 @@ namespace Content.Client.Overlays
         
         protected override void Draw(in OverlayDrawArgs args)
         {
+            if (args.Space != Space)
+                return;
+
             var handle = args.WorldHandle;
             
             handle.UseShader(_shader);
