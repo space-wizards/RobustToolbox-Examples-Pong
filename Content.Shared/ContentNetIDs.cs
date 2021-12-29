@@ -1,7 +1,6 @@
-namespace Content.Shared
+namespace Content.Shared;
+
+public static class ContentNetIDs
 {
-    public static class ContentNetIDs
-    {
-        public const uint PADDLE = 1000;
-    }
+    public const uint PADDLE = 1000;
 }

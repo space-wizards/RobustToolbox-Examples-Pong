@@ -1,12 +1,11 @@
 using Robust.Shared.IoC;
 
-namespace Content.Shared
+namespace Content.Shared;
+
+public class SharedContentIoC
 {
-    public class SharedContentIoC
+    public static void Register()
     {
-        public static void Register()
-        {
-            // Registrations shared between the client and server go here...
-        }
+        // Registrations shared between the client and server go here...
     }
 }

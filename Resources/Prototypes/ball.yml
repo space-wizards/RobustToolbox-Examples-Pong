@@ -4,6 +4,7 @@
     - type: Physics
       status: InAir
       bodyType: KinematicController
+    - type: Fixtures
       fixtures:
         - name: collision
           friction: 0

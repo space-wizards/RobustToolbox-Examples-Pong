@@ -7,41 +7,40 @@ using Robust.Shared.IoC;
 using Robust.Shared.Timing;
 
 // DEVNOTE: Games that want to be on the hub are FORCED use the "Content." prefix for assemblies they want to load.
-namespace Content.Server
+namespace Content.Server;
+
+[UsedImplicitly]
+public class EntryPoint : GameServer
 {
-    [UsedImplicitly]
-    public class EntryPoint : GameServer
-    {
-        public override void Init() {
-            base.Init();
+    public override void Init() {
+        base.Init();
 
-            var factory = IoCManager.Resolve<IComponentFactory>();
+        var factory = IoCManager.Resolve<IComponentFactory>();
 
-            factory.DoAutoRegistrations();
+        factory.DoAutoRegistrations();
 
-            foreach (var ignoreName in IgnoredComponents.List)
-            {
-                factory.RegisterIgnore(ignoreName);
-            }
+        foreach (var ignoreName in IgnoredComponents.List)
+        {
+            factory.RegisterIgnore(ignoreName);
+        }
 
-            ServerContentIoC.Register();
+        ServerContentIoC.Register();
 
-            IoCManager.BuildGraph();
+        IoCManager.BuildGraph();
             
-            factory.GenerateNetIds();
+        factory.GenerateNetIds();
 
-            // DEVNOTE: This is generally where you'll be setting up the IoCManager further.
-        }
+        // DEVNOTE: This is generally where you'll be setting up the IoCManager further.
+    }
 
-        public override void PostInit()
-        {
-            // Pong doesn't need PVS.
-            //IoCManager.Resolve<IConfigurationManager>().SetCVar(CVars.NetPVS, false);
-        }
+    public override void PostInit()
+    {
+        // Pong doesn't need PVS.
+        //IoCManager.Resolve<IConfigurationManager>().SetCVar(CVars.NetPVS, false);
+    }
 
-        public override void Update(ModUpdateLevel level, FrameEventArgs frameEventArgs)
-        {
-            base.Update(level, frameEventArgs);
-        }
+    public override void Update(ModUpdateLevel level, FrameEventArgs frameEventArgs)
+    {
+        base.Update(level, frameEventArgs);
     }
 }

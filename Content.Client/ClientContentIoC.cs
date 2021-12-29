@@ -2,17 +2,16 @@ using Content.Client.UserInterface;
 using Content.Shared;
 using Robust.Shared.IoC;
 
-namespace Content.Client
+namespace Content.Client;
+
+internal static class ClientContentIoC
 {
-    internal static class ClientContentIoC
+    public static void Register()
     {
-        public static void Register()
-        {
-            SharedContentIoC.Register();
+        SharedContentIoC.Register();
             
-            IoCManager.Register<HudManager, HudManager>();
-            IoCManager.Register<StyleSheetManager, StyleSheetManager>();
-            IoCManager.Register<InputHookupManager, InputHookupManager>();
-        }
+        IoCManager.Register<HudManager, HudManager>();
+        IoCManager.Register<StyleSheetManager, StyleSheetManager>();
+        IoCManager.Register<InputHookupManager, InputHookupManager>();
     }
 }

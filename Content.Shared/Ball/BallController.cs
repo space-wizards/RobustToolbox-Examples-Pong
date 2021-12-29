@@ -7,37 +7,36 @@ using Robust.Shared.Maths;
 using Robust.Shared.Physics.Controllers;
 using Robust.Shared.Player;
 
-namespace Content.Shared.Ball
+namespace Content.Shared.Ball;
+
+[UsedImplicitly]
+public class BallController : VirtualController
 {
-    [UsedImplicitly]
-    public class BallController : VirtualController
+    public override List<Type> UpdatesBefore { get; } = new()
     {
-        public override List<Type> UpdatesBefore { get; } = new()
-        {
-            typeof(ArenaController),
-        };
+        typeof(ArenaController),
+    };
 
-        public override void UpdateAfterSolve(bool prediction, float frameTime)
-        {
-            base.UpdateAfterSolve(prediction, frameTime);
+    public override void UpdateAfterSolve(bool prediction, float frameTime)
+    {
+        base.UpdateAfterSolve(prediction, frameTime);
 
-            foreach (var (_, transform, physics) in EntityManager.EntityQuery<BallComponent, TransformComponent, PhysicsComponent>())
+        foreach (var (_, transform, physics) in EntityManager.EntityQuery<BallComponent, TransformComponent, PhysicsComponent>())
+        {
+            var y = transform.WorldPosition.Y;
+
+            // Reflect velocity on collision with arena.
+            if (!(y > 0) || !(y < SharedPongSystem.ArenaBox.Height))
             {
-                var y = transform.WorldPosition.Y;
-
-                // Reflect velocity on collision with arena.
-                if (!(y > 0) || !(y < SharedPongSystem.ArenaBox.Height))
-                {
-                    physics.LinearVelocity *= new Vector2(1, -1);
-                    SoundSystem.Play(Filter.Broadcast(), "/Audio/bloop.wav", AudioParams.Default.WithVolume(-5f));
-                }
-
-                var maxSpeed = EntitySystem.Get<BallSystem>().BallMaximumSpeed;
-
-                // Ensure ball doesn't go above the maximum speed.
-                if (physics.LinearVelocity.Length > maxSpeed)
-                    physics.LinearVelocity = physics.LinearVelocity.Normalized * maxSpeed;
+                physics.LinearVelocity *= new Vector2(1, -1);
+                SoundSystem.Play(Filter.Broadcast(), "/Audio/bloop.wav", AudioParams.Default.WithVolume(-5f));
             }
+
+            var maxSpeed = EntitySystem.Get<BallSystem>().BallMaximumSpeed;
+
+            // Ensure ball doesn't go above the maximum speed.
+            if (physics.LinearVelocity.Length > maxSpeed)
+                physics.LinearVelocity = physics.LinearVelocity.Normalized * maxSpeed;
         }
     }
 }
