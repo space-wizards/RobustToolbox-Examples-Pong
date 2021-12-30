@@ -26,21 +26,18 @@ except ImportError:
 p = os.path.join
 
 SHARED_IGNORED_RESOURCES = {
-    "CONTENT_GOES_HERE",
     ".gitignore",
     ".directory",
     ".DS_Store"
 }
 
 CLIENT_IGNORED_RESOURCES = {
-    "Maps",
-    "emotes.xml",
-    "Groups"
+
 }
 
 CLIENT_CONTENT_ASSEMBLIES = [
     "Content.Client",
-    "Content.Shared"
+    "Content.Shared",
 ]
 
 def main() -> None:
@@ -75,7 +72,7 @@ def wipe_bin():
     if os.path.exists("bin"):
         shutil.rmtree("bin")
 
-
+# Be advised this is called from package_server_build during a Hybrid-ACZ build.
 def build(skip_build: bool) -> None:
     # Run a full build.
     print(Fore.GREEN + "Building project..." + Style.RESET_ALL)
@@ -96,7 +93,7 @@ def build(skip_build: bool) -> None:
     print(Fore.GREEN + "Packaging client..." + Style.RESET_ALL)
 
     client_zip = zipfile.ZipFile(
-        p("release", "Pong.Client.zip"), "w",
+        p("release", "Content.Client.zip"), "w",
         compression=zipfile.ZIP_DEFLATED)
 
     copy_resources(client_zip)
