@@ -93,7 +93,7 @@ def build(skip_build: bool) -> None:
     print(Fore.GREEN + "Packaging client..." + Style.RESET_ALL)
 
     client_zip = zipfile.ZipFile(
-        p("release", "Content.Client.zip"), "w",
+        p("release", "Pong.Client.zip"), "w",
         compression=zipfile.ZIP_DEFLATED)
 
     copy_resources(client_zip)
