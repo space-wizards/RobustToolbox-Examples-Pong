@@ -1,8 +1,7 @@
-using System;
-using System.Collections.Generic;
 using JetBrains.Annotations;
 using Robust.Shared.Audio;
 using Robust.Shared.GameObjects;
+using Robust.Shared.IoC;
 using Robust.Shared.Maths;
 using Robust.Shared.Physics.Controllers;
 using Robust.Shared.Player;
@@ -12,10 +11,14 @@ namespace Content.Shared.Ball;
 [UsedImplicitly]
 public class BallController : VirtualController
 {
-    public override List<Type> UpdatesBefore { get; } = new()
+    [Dependency] private readonly BallSystem _ballSystem = default!;
+    
+    public override void Initialize()
     {
-        typeof(ArenaController),
-    };
+        base.Initialize();
+        
+        UpdatesBefore.Add(typeof(ArenaController));
+    }
 
     public override void UpdateAfterSolve(bool prediction, float frameTime)
     {
@@ -32,7 +35,7 @@ public class BallController : VirtualController
                 SoundSystem.Play(Filter.Broadcast(), "/Audio/bloop.wav", AudioParams.Default.WithVolume(-5f));
             }
 
-            var maxSpeed = EntitySystem.Get<BallSystem>().BallMaximumSpeed;
+            var maxSpeed = _ballSystem.BallMaximumSpeed;
 
             // Ensure ball doesn't go above the maximum speed.
             if (physics.LinearVelocity.Length > maxSpeed)
