@@ -14,6 +14,6 @@ An example multiplayer project for RobustToolbox.
 3. Run `git submodule update --init --recursive`
 4. Run `dotnet build`
 5. Run `dotnet run --project Content.Server` to start the server
-6. Open another command window in the repository folder for the client, and run `dotnet run --project Content.Client`
+6. Open another command window in the repository folder, and run `dotnet run --project Content.Client`
 7. When the client window appears, enter a name, and connect to your local server with `127.0.0.1`
 8. Repeat steps 6, and 7 to connect a second player
