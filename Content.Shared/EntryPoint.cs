@@ -5,6 +5,7 @@ using Robust.Shared.Configuration;
 using Robust.Shared.ContentPack;
 using Robust.Shared.IoC;
 using Robust.Shared.Localization;
+using Robust.Shared.Network;
 
 // DEVNOTE: Games that want to be on the hub can change their namespace prefix in the "manifest.yml" file.
 namespace Content.Shared;
@@ -24,8 +25,13 @@ public class EntryPoint : GameShared
     public override void Init()
     {
         base.Init();
+        var netManager = IoCManager.Resolve<INetManager>();
+        var configManager = IoCManager.Resolve<IConfigurationManager>();
         
-        // No need for PVS, this is pong...
-        IoCManager.Resolve<IConfigurationManager>().SetCVar(CVars.NetPVS, false);
+        if (netManager.IsServer)
+        {
+            // No need for PVS, this is pong...
+            configManager.SetCVar(CVars.NetPVS, false);
+        }
     }
 }

@@ -14,6 +14,7 @@ namespace Content.Shared.Ball;
 public class BallSystem : EntitySystem
 {
     [Dependency] private readonly IConfigurationManager _cfgManager = default!;
+    [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
         
     private float _ballSpeedupFactor;
 
@@ -56,7 +57,7 @@ public class BallSystem : EntitySystem
             
         physics.LinearVelocity *= new Vector2(-1, MathF.Sign(y) * MathF.Sign(ourVelocity.Y)) * _ballSpeedupFactor;
 
-        SoundSystem.Play(Filter.Broadcast(), "/Audio/bleep.wav", AudioParams.Default.WithVolume(-5f));
+        _audioSystem.PlayGlobal("/Audio/bleep.wav", Filter.Broadcast(), AudioParams.Default.WithVolume(-5f));
     }
 }
 

@@ -12,6 +12,7 @@ namespace Content.Shared.Ball;
 public class BallController : VirtualController
 {
     [Dependency] private readonly BallSystem _ballSystem = default!;
+    [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
     
     public override void Initialize()
     {
@@ -32,7 +33,7 @@ public class BallController : VirtualController
             if (!(y > 0) || !(y < SharedPongSystem.ArenaBox.Height))
             {
                 physics.LinearVelocity *= new Vector2(1, -1);
-                SoundSystem.Play(Filter.Broadcast(), "/Audio/bloop.wav", AudioParams.Default.WithVolume(-5f));
+                _audioSystem.PlayGlobal("/Audio/bloop.wav", Filter.Broadcast(), AudioParams.Default.WithVolume(-5f));
             }
 
             var maxSpeed = _ballSystem.BallMaximumSpeed;

@@ -11,7 +11,7 @@ using Robust.Shared.Timing;
 namespace Content.Server;
 
 [UsedImplicitly]
-public class EntryPoint : GameServer
+public sealed class EntryPoint : GameServer
 {
     public override void Init() {
         base.Init();

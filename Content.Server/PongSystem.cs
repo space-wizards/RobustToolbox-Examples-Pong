@@ -22,13 +22,14 @@ using Timer = Robust.Shared.Timing.Timer;
 namespace Content.Server;
 
 [UsedImplicitly]
-public class PongSystem : SharedPongSystem
+public sealed class PongSystem : SharedPongSystem
 {
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly IConfigurationManager _cfgManager = default!;
     [Dependency] private readonly ActorSystem _actorSystem = default!;
+    [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
         
     private float _restartTimer;
     private int _winThreshold;
@@ -288,7 +289,7 @@ public class PongSystem : SharedPongSystem
 
                 void OnScore()
                 {
-                    SoundSystem.Play(Filter.Broadcast(), "/Audio/score.wav", AudioParams.Default);
+                    _audioSystem.PlayGlobal("/Audio/score.wav", Filter.Broadcast(), AudioParams.Default);
                         
                     // Reset ball.
                     ballXform.Coordinates = EntityCoordinates.FromMap(_mapManager, MapCenter);
