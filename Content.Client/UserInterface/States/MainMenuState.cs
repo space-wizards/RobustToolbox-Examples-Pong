@@ -1,5 +1,4 @@
 using System;
-using System.Net;
 using System.Text.RegularExpressions;
 using Content.Client.UserInterface.Hud;
 using Robust.Client;
@@ -15,7 +14,7 @@ using UsernameHelpers = Robust.Shared.AuthLib.UsernameHelpers;
 
 namespace Content.Client.UserInterface.States;
 
-public class MainMenuState : State
+public sealed class MainMenuState : State
 {
     [Dependency] private readonly IBaseClient _client = default!;
     [Dependency] private readonly IClientNetManager _netManager = default!;

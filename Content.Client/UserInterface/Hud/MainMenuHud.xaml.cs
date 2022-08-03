@@ -6,7 +6,7 @@ using Robust.Client.UserInterface.Controls;
 namespace Content.Client.UserInterface.Hud;
 
 [GenerateTypedNameReferences]
-public partial class MainMenuHud : Control
+public sealed partial class MainMenuHud : Control
 {
     public event Action<BaseButton.ButtonEventArgs>? OnConnectButtonPressed
     {

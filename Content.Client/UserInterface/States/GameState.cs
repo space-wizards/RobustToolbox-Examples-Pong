@@ -11,7 +11,7 @@ using Robust.Shared.Timing;
 
 namespace Content.Client.UserInterface.States;
 
-public class GameState : State
+public sealed class GameState : State
 {
     [Dependency] private readonly IEntityManager _entityManager = default!;
     [Dependency] private readonly IUserInterfaceManager _userInterface = default!;

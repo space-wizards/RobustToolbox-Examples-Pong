@@ -16,7 +16,7 @@ namespace Content.Shared.Paddle;
 ///     Since this is in shared, it will be predicted on the client and reconciled if needed.
 /// </summary>
 [UsedImplicitly]
-public class PaddleSystem : EntitySystem
+public sealed class PaddleSystem : EntitySystem
 {
     [Dependency] private readonly IConfigurationManager _cfgManager = default!;
 
@@ -103,10 +103,8 @@ public class PaddleSystem : EntitySystem
 }
 
 [RegisterComponent, NetworkedComponent]
-public class PaddleComponent : Component
+public sealed class PaddleComponent : Component
 {
-    public override string Name => "Paddle";
-
     public Button Pressed { get; set; } = Button.None;
     public int Score { get; set; } = 0;
     public string Player { get; set; } = string.Empty;
@@ -114,7 +112,7 @@ public class PaddleComponent : Component
 }
 
 [Serializable, NetSerializable]
-public class PaddleComponentState : ComponentState
+public sealed class PaddleComponentState : ComponentState
 {
     public int Score { get; }
     public string Player { get; }

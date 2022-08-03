@@ -38,7 +38,7 @@ public sealed class PongSystem : SharedPongSystem
     private const float PaddleOffset = 1f;
     private MapId _map = MapId.Nullspace;
 
-    private float _endTimer = 0f;
+    private float _endTimer;
 
     private MapCoordinates MapCenter => new(ArenaSize / 2f, _map);
     private MapCoordinates PaddleOneStarting => new(new Vector2(PaddleOffset, MapCenter.Y), _map);
@@ -86,11 +86,6 @@ public sealed class PongSystem : SharedPongSystem
     {
         base.Shutdown();
         _playerManager.PlayerStatusChanged -= OnPlayerStatusChanged;
-    }
-
-    private bool IsPlayer(IPlayerSession session)
-    {
-        return session == _playerOne || session == _playerTwo;
     }
 
     private void StartGame()

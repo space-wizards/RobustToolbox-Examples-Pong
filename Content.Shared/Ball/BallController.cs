@@ -9,7 +9,7 @@ using Robust.Shared.Player;
 namespace Content.Shared.Ball;
 
 [UsedImplicitly]
-public class BallController : VirtualController
+public sealed class BallController : VirtualController
 {
     [Dependency] private readonly BallSystem _ballSystem = default!;
     [Dependency] private readonly SharedAudioSystem _audioSystem = default!;

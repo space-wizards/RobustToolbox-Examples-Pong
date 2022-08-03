@@ -13,7 +13,7 @@ namespace Content.Client;
 /// <summary>
 ///     This class listens for input events and sends them to the server.
 /// </summary>
-public class InputHookupManager
+public sealed class InputHookupManager
 {
     [Dependency] private readonly IInputManager _inputManager = default!;
     [Dependency] private readonly IEntitySystemManager _entitySystemManager = default!;

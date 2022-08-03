@@ -1,24 +1,17 @@
 using Content.Client.Overlays;
 using Content.Client.UserInterface;
-using Content.Client.UserInterface.Hud;
-using Content.Client.UserInterface.States;
 using JetBrains.Annotations;
-using Robust.Client;
-using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
-using Robust.Client.State;
-using Robust.Client.UserInterface;
 using Robust.Shared.ContentPack;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
-using Robust.Shared.Maths;
 using Robust.Shared.Prototypes;
 
 // DEVNOTE: Games that want to be on the hub can change their namespace prefix in the "manifest.yml" file.
 namespace Content.Client;
 
 [UsedImplicitly]
-public class EntryPoint : GameClient
+public sealed class EntryPoint : GameClient
 {
     public override void PreInit()
     { 

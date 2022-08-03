@@ -1,17 +1,13 @@
 using JetBrains.Annotations;
 using Robust.Shared.GameObjects;
-using Robust.Shared.IoC;
 using Robust.Shared.Maths;
 using Robust.Shared.Physics.Controllers;
-using Robust.Shared.Timing;
 
 namespace Content.Shared.Paddle;
 
 [UsedImplicitly]
-public class PaddleController : VirtualController
+public sealed class PaddleController : VirtualController
 {
-    [Dependency] private readonly IGameTiming _gameTiming = default!;
-        
     public override void UpdateBeforeSolve(bool prediction, float frameTime)
     {
         base.UpdateBeforeSolve(prediction, frameTime);

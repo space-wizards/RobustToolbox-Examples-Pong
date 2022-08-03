@@ -13,7 +13,7 @@ namespace Content.Client.UserInterface;
 ///     This is required so text and controls show up.
 ///     (Please note that this stylesheet is simple and incomplete.)
 /// </summary>
-public class StyleSheetManager
+public sealed class StyleSheetManager
 {
     [Dependency] private readonly IUserInterfaceManager _userInterfaceManager = default!;
     [Dependency] private readonly IResourceCache _resourceCache = default!;
@@ -70,7 +70,7 @@ public class StyleSheetManager
                 }),
             // Window close button base texture.
             new StyleRule(
-                new SelectorElement(typeof(TextureButton), new[] {SS14Window.StyleClassWindowCloseButton}, null,
+                new SelectorElement(typeof(TextureButton), new[] {DefaultWindow.StyleClassWindowCloseButton}, null,
                     null),
                 new[]
                 {
@@ -79,7 +79,7 @@ public class StyleSheetManager
                 }),
             // Window close button hover.
             new StyleRule(
-                new SelectorElement(typeof(TextureButton), new[] {SS14Window.StyleClassWindowCloseButton}, null,
+                new SelectorElement(typeof(TextureButton), new[] {DefaultWindow.StyleClassWindowCloseButton}, null,
                     new[] {TextureButton.StylePseudoClassHover}),
                 new[]
                 {
@@ -87,7 +87,7 @@ public class StyleSheetManager
                 }),
             // Window close button pressed.
             new StyleRule(
-                new SelectorElement(typeof(TextureButton), new[] {SS14Window.StyleClassWindowCloseButton}, null,
+                new SelectorElement(typeof(TextureButton), new[] {DefaultWindow.StyleClassWindowCloseButton}, null,
                     new[] {TextureButton.StylePseudoClassPressed}),
                 new[]
                 {

@@ -4,7 +4,7 @@ using Robust.Client.UserInterface;
 namespace Content.Client.UserInterface.Hud;
 
 [GenerateTypedNameReferences]
-public partial class MessageControl : Control
+public sealed partial class MessageControl : Control
 {
     protected override void EnteredTree()
     {

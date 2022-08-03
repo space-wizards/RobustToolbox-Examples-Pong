@@ -11,7 +11,7 @@ using Robust.Shared.Player;
 namespace Content.Shared.Ball;
 
 [UsedImplicitly]
-public class BallSystem : EntitySystem
+public sealed class BallSystem : EntitySystem
 {
     [Dependency] private readonly IConfigurationManager _cfgManager = default!;
     [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
@@ -62,7 +62,6 @@ public class BallSystem : EntitySystem
 }
 
 [RegisterComponent]
-public class BallComponent : Component
+public sealed class BallComponent : Component
 {
-    public override string Name => "Ball";
 }

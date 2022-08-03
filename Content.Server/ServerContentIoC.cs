@@ -1,5 +1,4 @@
 using Content.Shared;
-using Robust.Shared.IoC;
 
 namespace Content.Server;
 

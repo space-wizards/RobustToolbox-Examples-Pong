@@ -11,27 +11,23 @@ using Robust.Shared.Network;
 namespace Content.Shared;
 
 [UsedImplicitly]
-public class EntryPoint : GameShared
+public sealed class EntryPoint : GameShared
 {
+    [Dependency] private readonly INetManager _netManager = default!;
+    [Dependency] private readonly IConfigurationManager _configManager = default!;
+    [Dependency] private readonly ILocalizationManager _localizationManager = default!;
     private const string Culture = "en-US";
 
     public override void PreInit()
     {
         IoCManager.InjectDependencies(this);
             
-        IoCManager.Resolve<ILocalizationManager>().LoadCulture(new CultureInfo(Culture));
-    }
-
-    public override void Init()
-    {
-        base.Init();
-        var netManager = IoCManager.Resolve<INetManager>();
-        var configManager = IoCManager.Resolve<IConfigurationManager>();
+        _localizationManager.LoadCulture(new CultureInfo(Culture));
         
-        if (netManager.IsServer)
+        if (_netManager.IsServer)
         {
             // No need for PVS, this is pong...
-            configManager.SetCVar(CVars.NetPVS, false);
+            _configManager.SetCVar(CVars.NetPVS, false);
         }
     }
 }

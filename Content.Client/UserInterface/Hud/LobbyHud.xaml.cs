@@ -4,7 +4,7 @@ using Robust.Client.UserInterface;
 namespace Content.Client.UserInterface.Hud;
 
 [GenerateTypedNameReferences]
-public partial class LobbyHud : Control
+public sealed partial class LobbyHud : Control
 {
 
 }

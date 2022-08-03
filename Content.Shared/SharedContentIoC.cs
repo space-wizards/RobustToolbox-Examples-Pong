@@ -1,8 +1,6 @@
-using Robust.Shared.IoC;
-
 namespace Content.Shared;
 
-public class SharedContentIoC
+public sealed class SharedContentIoC
 {
     public static void Register()
     {

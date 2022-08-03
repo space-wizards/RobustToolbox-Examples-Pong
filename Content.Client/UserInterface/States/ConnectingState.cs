@@ -9,7 +9,7 @@ using Robust.Shared.Network;
 
 namespace Content.Client.UserInterface.States;
 
-public class ConnectingState : State
+public sealed class ConnectingState : State
 {
     [Dependency] private readonly IGameController _gameController = default!;
     [Dependency] private readonly IUserInterfaceManager _userInterface = default!;

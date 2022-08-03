@@ -5,7 +5,7 @@ using Robust.Shared.Serialization;
 
 namespace Content.Shared;
 
-public class SharedPongSystem : EntitySystem
+public abstract class SharedPongSystem : EntitySystem
 {
     public static readonly Vector2 ArenaSize = new Vector2i(20, 10);
     public static readonly Box2 ArenaBox = Box2.FromDimensions(Vector2.Zero, ArenaSize);
@@ -22,7 +22,7 @@ public enum PongGameState
 }
 
 [Serializable, NetSerializable]
-public class PongGameStateChangedEvent : EntityEventArgs
+public sealed class PongGameStateChangedEvent : EntityEventArgs
 {
     public PongGameState Old { get; init; }
     public PongGameState New { get; init; }

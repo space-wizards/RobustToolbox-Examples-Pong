@@ -1,11 +1,8 @@
 using JetBrains.Annotations;
 using Robust.Server.ServerStatus;
-using Robust.Shared;
-using Robust.Shared.Configuration;
 using Robust.Shared.ContentPack;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
-using Robust.Shared.Timing;
 
 // DEVNOTE: Games that want to be on the hub can change their namespace prefix in the "manifest.yml" file.
 namespace Content.Server;
@@ -36,10 +33,5 @@ public sealed class EntryPoint : GameServer
         factory.GenerateNetIds();
 
         // DEVNOTE: This is generally where you'll be setting up the IoCManager further.
-    }
-
-    public override void Update(ModUpdateLevel level, FrameEventArgs frameEventArgs)
-    {
-        base.Update(level, frameEventArgs);
     }
 }

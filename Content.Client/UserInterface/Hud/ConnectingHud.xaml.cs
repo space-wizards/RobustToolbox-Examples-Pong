@@ -5,7 +5,7 @@ using Robust.Client.UserInterface.Controls;
 namespace Content.Client.UserInterface.Hud;
 
 [GenerateTypedNameReferences]
-public partial class ConnectingHud : Control
+public sealed partial class ConnectingHud : Control
 {
     public Button ReconnectButton => Button;
         

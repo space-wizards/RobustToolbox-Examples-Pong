@@ -10,7 +10,7 @@ namespace Content.Shared;
 ///     Ensures no game objects go out of bounds.
 /// </summary>
 [UsedImplicitly]
-public class ArenaController : VirtualController
+public sealed class ArenaController : VirtualController
 {
     public override void UpdateAfterSolve(bool prediction, float frameTime)
     {

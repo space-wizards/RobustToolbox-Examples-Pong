@@ -10,7 +10,7 @@ namespace Content.Client.UserInterface;
 ///     Handles changing the UI state depending on whether we're connecting/connected to a server, etc.
 /// </summary>
 [UsedImplicitly]
-public class HudManager
+public sealed class HudManager
 {
     [Dependency] private readonly IGameController _gameController = default!;
     [Dependency] private readonly IBaseClient _client = default!;

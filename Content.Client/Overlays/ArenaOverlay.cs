@@ -3,14 +3,13 @@ using JetBrains.Annotations;
 using Robust.Client.Graphics;
 using Robust.Shared.Enums;
 using Robust.Shared.IoC;
-using Robust.Shared.Maths;
 using Robust.Shared.Prototypes;
 using Color = Robust.Shared.Maths.Color;
 
 namespace Content.Client.Overlays;
 
 [UsedImplicitly]
-public class ArenaOverlay : Overlay
+public sealed class ArenaOverlay : Overlay
 {
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
 
