@@ -5,7 +5,7 @@ An example multiplayer project for RobustToolbox.
 ## How to build, and run
 ### Required Tools (Windows, Linux, Mac)
 > Tools needed to build this repository. After installing them, you may need to restart your machine for the build to work.
-* [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+* [.NET 7 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/7.0)
 * [Git](https://git-scm.com/downloads)
 
 ### Build, and run steps

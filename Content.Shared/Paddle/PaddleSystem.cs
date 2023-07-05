@@ -39,7 +39,7 @@ public sealed class PaddleSystem : EntitySystem
 
     private void GetPaddleState(EntityUid uid, PaddleComponent component, ref ComponentGetState args)
     {
-        args.State = new PaddleComponentState(component.Score, component.Player, component.First, component.Pressed);
+        args.State = new PaddleComponentState(component.Score, component.Player, component.First, component.Pressed, component.PaddleX);
     }
 
     private void HandlePaddleState(EntityUid uid, PaddleComponent component, ref ComponentHandleState args)
@@ -50,6 +50,7 @@ public sealed class PaddleSystem : EntitySystem
         component.Score = state.Score;
         component.Player = state.Player;
         component.First = state.First;
+        component.PaddleX = state.PaddleX;
     }
 
     public override void Shutdown()
@@ -75,7 +76,7 @@ public sealed class PaddleSystem : EntitySystem
         else
             paddle.Pressed &= ~button;
             
-        paddle.Dirty();
+        Dirty(session.AttachedEntity.Value, paddle);
     }
 
     private sealed class ButtonInputCmdHandler : InputCmdHandler
@@ -109,6 +110,7 @@ public sealed class PaddleComponent : Component
     public int Score { get; set; } = 0;
     public string Player { get; set; } = string.Empty;
     public bool First { get; set; } = false;
+    public float PaddleX { get; set; } = 0;
 }
 
 [Serializable, NetSerializable]
@@ -118,13 +120,15 @@ public sealed class PaddleComponentState : ComponentState
     public string Player { get; }
     public bool First { get; }
     public Button Pressed { get; }
+    public float PaddleX { get; set; } = 0;
         
-    public PaddleComponentState(int score, string player, bool first, Button pressed)
+    public PaddleComponentState(int score, string player, bool first, Button pressed, float paddleX)
     {
         Score = score;
         Player = player;
         First = first;
         Pressed = pressed;
+        PaddleX = paddleX;
     }
 }
 

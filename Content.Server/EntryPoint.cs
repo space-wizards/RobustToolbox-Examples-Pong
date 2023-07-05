@@ -1,4 +1,8 @@
+using System.Threading;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
+using Robust.Packaging;
+using Robust.Packaging.AssetProcessing;
 using Robust.Server.ServerStatus;
 using Robust.Shared.ContentPack;
 using Robust.Shared.GameObjects;
@@ -12,11 +16,13 @@ public sealed class EntryPoint : GameServer
 {
     public override void Init() {
         base.Init();
-
-        // Configure ACZ correctly.
-        IoCManager.Resolve<IStatusHost>().SetAczInfo(
-            "Content.Client", new []{"Content.Client", "Content.Shared"});
         
+        // Configure ACZ correctly.
+        IoCManager.Resolve<IStatusHost>().SetMagicAczProvider(
+            new DefaultMagicAczProvider(
+                new DefaultMagicAczInfo("Content.Client", new []{"Content.Client", "Content.Shared"}),
+                IoCManager.Instance!));
+
         var factory = IoCManager.Resolve<IComponentFactory>();
 
         factory.DoAutoRegistrations();
@@ -29,7 +35,7 @@ public sealed class EntryPoint : GameServer
         ServerContentIoC.Register();
 
         IoCManager.BuildGraph();
-            
+
         factory.GenerateNetIds();
 
         // DEVNOTE: This is generally where you'll be setting up the IoCManager further.

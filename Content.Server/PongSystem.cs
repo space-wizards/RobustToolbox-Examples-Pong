@@ -11,9 +11,9 @@ using Robust.Shared.Configuration;
 using Robust.Shared.Enums;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
-using Robust.Shared.Log;
 using Robust.Shared.Map;
 using Robust.Shared.Maths;
+using Robust.Shared.Physics.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Random;
 using Robust.Shared.Utility;
@@ -28,9 +28,11 @@ public sealed class PongSystem : SharedPongSystem
     [Dependency] private readonly IMapManager _mapManager = default!;
     [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly IConfigurationManager _cfgManager = default!;
-    [Dependency] private readonly ActorSystem _actorSystem = default!;
+    [Dependency] private readonly ActorSystem _actor = default!;
     [Dependency] private readonly SharedAudioSystem _audioSystem = default!;
-        
+    [Dependency] private readonly TransformSystem _transform = default!;
+    [Dependency] private readonly PhysicsSystem _physics = default!;
+
     private float _restartTimer;
     private int _winThreshold;
     private const float BallScoreOffset = 0.9f;
@@ -54,7 +56,7 @@ public sealed class PongSystem : SharedPongSystem
     /// <summary>
     ///     Returns the number of players who are connected or in-game.
     /// </summary>
-    private int ConnectedPlayers => Filter.Empty().AddWhere(player => player.Status is SessionStatus.Connected or SessionStatus.InGame).Recipients.Count();
+    private static int ConnectedPlayers => Filter.Empty().AddWhere(player => player.Status is SessionStatus.Connected or SessionStatus.InGame).Recipients.Count();
         
     public float BallScoreSpeedMultiplier
     {
@@ -95,7 +97,7 @@ public sealed class PongSystem : SharedPongSystem
         if (ConnectedPlayers < 2)
             return;
             
-        Logger.Info("Starting pong game...");
+        Log.Info("Starting pong game...");
             
         ChangeState(PongGameState.Game);
 
@@ -107,7 +109,7 @@ public sealed class PongSystem : SharedPongSystem
         _map = _mapManager.CreateMap();
             
         _ball = MakeBall();
-        Comp<PhysicsComponent>(_ball.Value).LinearVelocity = Vector2.One * BallInitialSpeed * BallScoreSpeedMultiplier; 
+        _physics.SetLinearVelocity(_ball.Value, Vector2.One * BallInitialSpeed * BallScoreSpeedMultiplier);
 
         _paddleOne = MakePaddle(_playerOne, true);
         _paddleTwo = MakePaddle(_playerTwo, false);
@@ -123,7 +125,7 @@ public sealed class PongSystem : SharedPongSystem
     {
         DebugTools.Assert(State == PongGameState.Game);
 
-        Logger.Info("Ending pong game...");
+        Log.Info("Ending pong game...");
 
         if(_ball is {} ball)
             Del(ball);
@@ -136,7 +138,7 @@ public sealed class PongSystem : SharedPongSystem
     {
         DebugTools.Assert(State == PongGameState.End);
 
-        Logger.Info("Restarting pong game...");
+        Log.Info("Restarting pong game...");
             
         // Clear all entities.
         foreach (var entity in EntityManager.GetEntities())
@@ -159,8 +161,8 @@ public sealed class PongSystem : SharedPongSystem
             
         RaiseLocalEvent(ev);
         RaiseNetworkEvent(ev);
-            
-        Logger.Info($"Pong Game State changed from {old} to {State}!");
+        
+        Log.Info($"Pong Game State changed from {old} to {State}!");
     }
 
     private EntityUid MakeBall()
@@ -179,9 +181,10 @@ public sealed class PongSystem : SharedPongSystem
 
         paddle.Player = session.Name;
         paddle.First = first;
-        paddle.Dirty();
-            
-        session.AttachToEntity(entity);
+        paddle.PaddleX = first ? PaddleOneStarting.X : PaddleTwoStarting.X;
+        Dirty(entity, paddle);
+
+        _actor.Attach(entity, session);
 
         return entity;
     }
@@ -192,8 +195,8 @@ public sealed class PongSystem : SharedPongSystem
 
         // Empty entity.
         var entity = EntityManager.SpawnEntity(null, MapCenter);
-            
-        session.AttachToEntity(entity);
+
+        _actor.Attach(entity, session);
     }
 
     private void EnsurePaddlesHavePlayers()
@@ -214,12 +217,12 @@ public sealed class PongSystem : SharedPongSystem
                 
             var player = (IPlayerSession)_random.PickAndTake(players);
 
-            _actorSystem.Attach(paddle, player);
+            _actor.Attach(paddle, player);
 
             var paddleComp = Comp<PaddleComponent>(paddle);
             paddleComp.Player = player.Name;
-            paddleComp.Dirty();
-                
+            Dirty(paddle, paddleComp);
+
             return player;
         }
 
@@ -228,16 +231,14 @@ public sealed class PongSystem : SharedPongSystem
         {
             if (_playerOne is not {Status: SessionStatus.InGame})
             {
-                if(HasComp<ActorComponent>(_paddleOne!.Value))
-                    _playerOne?.DetachFromEntity();
+                _actor.Detach(_paddleOne!.Value);
                 _playerOne = PaddleReassign(_paddleOne!.Value, _playerTwo);
             }
 
             if (_playerTwo is not {Status: SessionStatus.InGame})
             {
-                if(HasComp<ActorComponent>(_paddleTwo!.Value))
-                    _playerTwo?.DetachFromEntity();
-                _playerTwo = PaddleReassign(_paddleTwo.Value, _playerOne);
+                _actor.Detach(_paddleTwo!.Value);
+                _playerTwo = PaddleReassign(_paddleTwo!.Value, _playerOne);
             }
         }, CancellationToken.None);
     }
@@ -280,34 +281,34 @@ public sealed class PongSystem : SharedPongSystem
                 }
 
                 var ballXform = Transform(_ball!.Value);
-                var ballX = ballXform.WorldPosition.X;
+                var ballX = _transform.GetWorldPosition(ballXform).X;
 
                 void OnScore()
                 {
-                    _audioSystem.PlayGlobal("/Audio/score.wav", Filter.Broadcast(), AudioParams.Default);
+                    _audioSystem.PlayGlobal("/Audio/score.wav", Filter.Broadcast(), true, AudioParams.Default);
                         
                     // Reset ball.
-                    ballXform.Coordinates = EntityCoordinates.FromMap(_mapManager, MapCenter);
+                    _transform.SetCoordinates(_ball.Value, ballXform, EntityCoordinates.FromMap(_mapManager, MapCenter));
                     var ballPhysics = Comp<PhysicsComponent>(_ball.Value);
                     var speed = ballPhysics.LinearVelocity.Normalized * BallInitialSpeed * BallScoreSpeedMultiplier;
-                    ballPhysics.LinearVelocity = Vector2.Zero;
-                    Timer.Spawn(1000, () => ballPhysics.LinearVelocity = speed, CancellationToken.None);
+                    _physics.SetLinearVelocity(_ball.Value, Vector2.Zero, body:ballPhysics);
+                    Timer.Spawn(1000, () => _physics.SetLinearVelocity(_ball.Value, speed, body:ballPhysics), CancellationToken.None);
                 }
                     
                 var paddleOne = Comp<PaddleComponent>(_paddleOne!.Value);
                 var paddleTwo = Comp<PaddleComponent>(_paddleTwo!.Value);
                     
-                if (ballX < Transform(_paddleOne.Value).WorldPosition.X - BallScoreOffset)
+                if (ballX < _transform.GetWorldPosition(_paddleOne.Value).X - BallScoreOffset)
                 {
                     paddleTwo.Score++;
-                    paddleTwo.Dirty();
+                    Dirty(_paddleTwo.Value, paddleTwo);
                     OnScore();
                 }
                     
-                if (ballX > Transform(_paddleTwo.Value).WorldPosition.X + BallScoreOffset)
+                if (ballX > _transform.GetWorldPosition(_paddleTwo.Value).X + BallScoreOffset)
                 {
                     paddleOne.Score++;
-                    paddleOne.Dirty();
+                    Dirty(_paddleOne.Value, paddleOne);
                     OnScore();
                 }
 

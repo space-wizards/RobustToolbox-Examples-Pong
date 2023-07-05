@@ -27,7 +27,7 @@ public sealed class MainMenuState : State
         
     private MainMenuHud? _mainMenu;
         
-    public override void Startup()
+    protected override void Startup()
     {
         _mainMenu = new MainMenuHud
         {
@@ -43,7 +43,7 @@ public sealed class MainMenuState : State
         _userInterface.StateRoot.AddChild(_mainMenu);
     }
         
-    public override void Shutdown()
+    protected override void Shutdown()
     {
         _netManager.ConnectFailed -= OnConnectFailed;
         _mainMenu?.Dispose();

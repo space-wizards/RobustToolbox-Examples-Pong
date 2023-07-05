@@ -2,6 +2,7 @@ using Robust.Client.Graphics;
 using Robust.Shared.Enums;
 using Robust.Shared.GameObjects;
 using Robust.Shared.IoC;
+using Robust.Shared.Physics.Components;
 using Robust.Shared.Prototypes;
 using Color = Robust.Shared.Maths.Color;
 
@@ -33,9 +34,10 @@ public sealed class CollisionOverlay : Overlay
             
         handle.UseShader(_shader);
         var lookupSystem = _entitySystemManager.GetEntitySystem<EntityLookupSystem>();
-        foreach (var (transform, _) in _entityManager.EntityQuery<TransformComponent, PhysicsComponent>())
+        var enumerator = _entityManager.EntityQueryEnumerator<TransformComponent, PhysicsComponent>();
+        while (enumerator.MoveNext(out var uid, out var transform, out _))
         {
-            var aabb = lookupSystem.GetWorldAABB(transform.Owner, transform);
+            var aabb = lookupSystem.GetWorldAABB(uid, transform);
             handle.DrawRect(aabb, Color.White);
         }
             

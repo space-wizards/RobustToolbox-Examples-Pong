@@ -3,10 +3,12 @@
   components:
     - type: Physics
       status: InAir
-      bodyType: KinematicController
+      sleepingAllowed: false
+      bodyType: Dynamic
+      linearDamping: 0
     - type: Fixtures
       fixtures:
-        - name: collision
+        collision:
           friction: 0
           restitution: 0
           shape:

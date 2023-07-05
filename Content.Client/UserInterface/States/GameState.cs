@@ -19,7 +19,7 @@ public sealed class GameState : State
     private GameHud? _gameHud;
     private LobbyHud? _lobbyHud;
         
-    public override void Startup()
+    protected override void Startup()
     {
         _gameHud = new GameHud() { Visible = false };
         _lobbyHud = new LobbyHud() {Visible = false };
@@ -31,7 +31,7 @@ public sealed class GameState : State
         _userInterface.StateRoot.AddChild(_lobbyHud);
     }
 
-    public override void Shutdown()
+    protected override void Shutdown()
     {
         _gameHud?.Dispose();
         _lobbyHud?.Dispose();
@@ -44,7 +44,7 @@ public sealed class GameState : State
         if (_gameHud == null || _lobbyHud == null)
             return;
 
-        var state = EntitySystem.Get<PongSystem>().State;
+        var state = _entityManager.System<PongSystem>().State;
 
         switch (state)
         {

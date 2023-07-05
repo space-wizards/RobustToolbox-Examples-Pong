@@ -18,7 +18,7 @@ public sealed class ConnectingState : State
 
     private ConnectingHud? _connectingHud;
 
-    public override void Startup()
+    protected override void Startup()
     {
         _connectingHud = new ConnectingHud();
             
@@ -59,7 +59,7 @@ public sealed class ConnectingState : State
         }
     }
 
-    public override void Shutdown()
+    protected override void Shutdown()
     {
         _netManager.ConnectFailed -= OnConnectFailed;
         _netManager.ClientConnectStateChanged -= OnConnectStateChanged;

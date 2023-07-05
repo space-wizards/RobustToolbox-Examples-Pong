@@ -11,7 +11,6 @@
     <Platforms>AnyCPU</Platforms>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <Import Project="..\RobustToolbox\MSBuild\Robust.DefineConstants.targets" />
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2020.1.0" PrivateAssets="All" />
   </ItemGroup>
@@ -26,5 +25,4 @@
       <Private>false</Private>
     </ProjectReference>
   </ItemGroup>
-  <Import Project="..\RobustToolbox\MSBuild\Robust.Analyzers.targets" />
 </Project>

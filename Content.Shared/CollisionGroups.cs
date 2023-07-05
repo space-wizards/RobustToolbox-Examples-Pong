@@ -12,7 +12,6 @@ namespace Content.Shared;
 [FlagsFor(typeof(CollisionLayer)), FlagsFor(typeof(CollisionMask))]
 public enum CollisionGroup
 {
-        
     None = 0,
     Solid = 1 << 0,
 }
